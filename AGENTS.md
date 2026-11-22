@@ -28,3 +28,11 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## CivicReach architecture
+- Staff role lives in `profiles.role`, writable only via service role (column-level UPDATE grants); RLS checks use `is_staff()`/`staff_role()` security-definer functions — prevents self-promotion.
+- Fund-moving actions go through `submit_micro_grant` / `decide_micro_grant` RPCs; the client never updates `diversion_fund` directly — keeps approval thresholds server-enforced.
+- Grant threshold logic is mirrored in `src/lib/civic.ts` `grantRouting` (UI only) and tested; change both together.
+- Field encounters always enqueue to localStorage first (`src/lib/offline-queue.ts`) and upsert by `client_ref` — makes offline retries idempotent.
+- Demo role switcher signs into shared demo accounts created by `ensureDemoAccount` server fn — lets reviewers preview staff tabs without sign-up.
+- PWA is manifest-only (no service worker) — avoids stale-cache issues in preview.

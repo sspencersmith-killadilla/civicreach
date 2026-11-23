@@ -79,6 +79,32 @@ export type Database = {
         }
         Relationships: []
       }
+      city_integration_secrets: {
+        Row: {
+          city_id: string
+          secrets: Json
+          updated_at: string
+        }
+        Insert: {
+          city_id: string
+          secrets?: Json
+          updated_at?: string
+        }
+        Update: {
+          city_id?: string
+          secrets?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "city_integration_secrets_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: true
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       city_settings: {
         Row: {
           city_id: string
@@ -518,6 +544,7 @@ export type Database = {
         Args: { _city: string; _default: number; _key: string }
         Returns: number
       }
+      city_integration_status: { Args: never; Returns: Json }
       current_city_id: { Args: never; Returns: string }
       decide_micro_grant: {
         Args: { _approve: boolean; _grant_id: string }
@@ -574,6 +601,10 @@ export type Database = {
       purge_all_cities: { Args: never; Returns: undefined }
       purge_city_records: { Args: { _city: string }; Returns: Json }
       purge_my_city_records: { Args: never; Returns: Json }
+      set_city_integration_secret: {
+        Args: { _key: string; _value: string }
+        Returns: undefined
+      }
       staff_role: { Args: { _uid: string }; Returns: string }
       submit_micro_grant: {
         Args: {

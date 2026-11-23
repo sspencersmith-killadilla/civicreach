@@ -10,7 +10,7 @@
 ## City-configurable production readiness
 - [x] Phase 1: city settings, readiness checklist, go-live, city-driven forms/hours/emergency/targets/grant limits/hubs, audit log
 - [x] Phase 2: bot protection (honeypot + fill time), demo switcher off via VITE_DEMO_MODE=off, audit log viewer
-- [ ] Email alerts & invite emails — blocked: needs a sender email domain the city/owner controls
+- [x] Email alerts — each city connects its own Resend account (guide, private key, test button)
 - [x] Phase 3: reports, CSV export, retention cleanup (manual + nightly), tracking-code lookup, Spanish resident pages
 - [x] Phase 4: SMS/ride/payment provider settings shown to staff
-- [ ] Live SMS sending and ride/payment API calls — blocked: need each city's provider accounts
+- [x] SMS alerts via each city's Twilio account; rides/payments/custom providers with setup guides shown to staff

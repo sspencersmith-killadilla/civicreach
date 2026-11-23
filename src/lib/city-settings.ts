@@ -3,6 +3,7 @@ import { BARRIERS, LIVING_SITUATIONS, SERVICE_CHIPS, SERVICE_HUBS, WELLNESS_NEED
 
 export type Option = { id: string; label: string; enabled: boolean };
 export type Hub = { name: string; address: string; hours: string };
+export type CustomProvider = { name: string; kind: string; contact: string; url: string; instructions: string };
 export type DayHours = { day: string; open: string; close: string; closed: boolean };
 
 export type CitySettings = {
@@ -14,13 +15,15 @@ export type CitySettings = {
   grants: { min: number; max: number; workerLimit: number; paymentMethods: Option[] };
   hubs: Hub[];
   zones: string[];
-  notifications: { alertEmails: string; urgentOnly: boolean };
+  notifications: { alertEmails: string; alertPhones: string; urgentOnly: boolean };
   privacy: { consent: string; retentionDays: number; recordsContact: string };
   languages: { spanish: boolean };
   integrations: {
+    email: { provider: string; fromAddress: string; fromName: string };
     sms: { provider: string; fromNumber: string; residentUpdates: boolean };
     rides: { provider: string; bookingUrl: string; phone: string };
     payments: { provider: string; instructions: string };
+    custom: CustomProvider[];
   };
 };
 
@@ -44,13 +47,15 @@ export function defaultSettings(): CitySettings {
     grants: { min: 50, max: 1000, workerLimit: 250, paymentMethods: [opt("vendor_check", "Vendor check"), opt("ach_landlord", "ACH to landlord"), opt("utility_direct", "Utility direct pay"), opt("prepaid_card", "Prepaid card"), opt("transit_voucher", "Transit voucher")] },
     hubs: SERVICE_HUBS.map((name) => ({ name, address: "", hours: "" })),
     zones: ["Central"],
-    notifications: { alertEmails: "", urgentOnly: true },
+    notifications: { alertEmails: "", alertPhones: "", urgentOnly: true },
     privacy: { consent: "I agree that city outreach staff may store this information to help me.", retentionDays: 1095, recordsContact: "" },
     languages: { spanish: true },
     integrations: {
+      email: { provider: "none", fromAddress: "", fromName: "" },
       sms: { provider: "none", fromNumber: "", residentUpdates: false },
       rides: { provider: "none", bookingUrl: "", phone: "" },
       payments: { provider: "manual", instructions: "" },
+      custom: [],
     },
   };
 }

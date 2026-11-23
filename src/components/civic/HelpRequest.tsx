@@ -1,3 +1,4 @@
+import { notifyNewRequest } from "@/lib/integrations.functions";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
@@ -51,6 +52,7 @@ export function HelpRequest({ city }: { city: CitySummary }) {
     });
     setBusy(false);
     if (error) { toast.error("We couldn't send your request. Please try again."); return; }
+    void notifyNewRequest({ data: { cityId: city.id, kind: "housing", code: tracking } }).catch(() => undefined);
     setCode(tracking);
   }
 

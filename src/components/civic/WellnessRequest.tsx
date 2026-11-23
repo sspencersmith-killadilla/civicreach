@@ -1,3 +1,4 @@
+import { notifyNewRequest } from "@/lib/integrations.functions";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Camera, Crosshair, Loader2, MapPin, Timer } from "lucide-react";
@@ -63,6 +64,7 @@ export function WellnessRequest({ city }: { city: CitySummary }) {
     });
     setBusy(false);
     if (error) { toast.error("We couldn't send this request. Please try again."); return; }
+    void notifyNewRequest({ data: { cityId: city.id, kind: "wellness", code: code } }).catch(() => undefined);
     setDone({ code, at: Date.now() });
   }
 

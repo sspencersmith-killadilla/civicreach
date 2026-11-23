@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { IntegrationsSettings } from "./IntegrationsSettings";
 
 const SECTIONS = [
   ["profile", "City profile"], ["hours", "Hours"], ["emergency", "Emergency"], ["targets", "Response targets"],
@@ -107,23 +108,7 @@ export function CitySettingsPanel() {
         <Toggle label="Offer Spanish on resident pages" checked={s.languages.spanish} onChange={(v) => set("languages", { spanish: v })} />
         <p className="text-sm text-muted-foreground">Residents see an Español button. Option labels you add above appear as you typed them.</p>
       </>}
-      {section === "integrations" && <>
-        <p className="text-sm text-muted-foreground">Connect outside services your city already uses. Until a provider is connected, staff see these details and complete the step by hand.</p>
-        <fieldset className="grid gap-3 rounded-xl border border-border p-3"><legend className="px-1 font-semibold">Text messages</legend>
-          <Pick label="Provider" value={s.integrations.sms.provider} options={[["none", "Not connected"], ["twilio", "Twilio"], ["other", "Other"]]} onChange={(v) => set("integrations", { sms: { ...s.integrations.sms, provider: v } })} />
-          <Field label="Sending phone number" value={s.integrations.sms.fromNumber} onChange={(v) => set("integrations", { sms: { ...s.integrations.sms, fromNumber: v } })} />
-          <Toggle label="Text residents when their request status changes" checked={s.integrations.sms.residentUpdates} onChange={(v) => set("integrations", { sms: { ...s.integrations.sms, residentUpdates: v } })} />
-        </fieldset>
-        <fieldset className="grid gap-3 rounded-xl border border-border p-3"><legend className="px-1 font-semibold">Rides</legend>
-          <Pick label="Provider" value={s.integrations.rides.provider} options={[["none", "City van only"], ["uber_health", "Uber Health"], ["lyft_concierge", "Lyft Concierge"], ["paratransit", "Municipal paratransit"], ["other", "Other"]]} onChange={(v) => set("integrations", { rides: { ...s.integrations.rides, provider: v } })} />
-          <Field label="Booking link for staff" value={s.integrations.rides.bookingUrl} onChange={(v) => set("integrations", { rides: { ...s.integrations.rides, bookingUrl: v } })} />
-          <Field label="Booking phone" value={s.integrations.rides.phone} onChange={(v) => set("integrations", { rides: { ...s.integrations.rides, phone: v } })} />
-        </fieldset>
-        <fieldset className="grid gap-3 rounded-xl border border-border p-3"><legend className="px-1 font-semibold">Grant payments</legend>
-          <Pick label="Provider" value={s.integrations.payments.provider} options={[["manual", "Manual (finance office)"], ["bill_com", "Bill.com"], ["prepaid_cards", "Prepaid card program"], ["other", "Other"]]} onChange={(v) => set("integrations", { payments: { ...s.integrations.payments, provider: v } })} />
-          <Area label="Payment steps shown after approval" value={s.integrations.payments.instructions} onChange={(v) => set("integrations", { payments: { ...s.integrations.payments, instructions: v } })} />
-        </fieldset>
-      </>}
+      {section === "integrations" && <IntegrationsSettings s={s} setInt={(v) => set("integrations", v)} setNotify={(v) => set("notifications", v)} />}
       {section === "hubs" && <>
         {s.hubs.map((h, i) => <div key={i} className="grid gap-2 rounded-xl border border-border p-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
           <Input className="h-12" placeholder="Name" value={h.name} onChange={(e) => setS((p) => ({ ...p, hubs: p.hubs.map((x, j) => j === i ? { ...x, name: e.target.value } : x) }))} />

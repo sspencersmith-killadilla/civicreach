@@ -36,6 +36,13 @@
       "when": 1795437700876,
       "tag": "0004_phase_2_4_lookup_retention",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1795438808706,
+      "tag": "0005_city_integration_secrets",
+      "breakpoints": true
     }
   ]
 }

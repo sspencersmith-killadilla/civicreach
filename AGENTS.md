@@ -44,3 +44,4 @@ use the editor.
 - Retention cleanup runs only through `purge_city_records` (nightly pg_cron for live cities, supervisor `purge_my_city_records`); grant-linked requests are never purged. Why: keep financial records.
 - Resident status lookup goes only through `public_request_status(slug, code)`, returning kind/status/date. Why: residents can never read request contents.
 - Resident translations are keyed by English text in `src/lib/i18n.ts`; CSV exports exclude clinical notes and contact info. Why: graceful fallback and privacy by default.
+- Each city's provider keys live in write-only `city_integration_secrets` (set via `set_city_integration_secret`, read only server-side in `src/lib/integrations.functions.ts`). Why: cities bring their own Resend/Twilio accounts without staff ever reading keys back.

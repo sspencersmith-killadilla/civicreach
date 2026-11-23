@@ -6,4 +6,4 @@
 - [x] Keep the CivicReach name and match the CivicPlexus Tandem/Relay visual direction.
 - [x] Add resident/staff user guides and verified self-hosting instructions.
 - [x] Test city signup, staff access, resident submission, isolation, and the production build.
-- [ ] Commit the completed release.
+- [x] Commit the completed release.

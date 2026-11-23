@@ -38,3 +38,5 @@ use the editor.
 - Field encounters always enqueue to localStorage first (`src/lib/offline-queue.ts`) and upsert by `client_ref`; entries carry `city_id` so one device cannot cross-sync city accounts.
 - The demo role switcher uses shared accounts confined to Demo City; real city staff use supervisor-created invitations.
 - PWA is manifest-only (no service worker) to avoid stale-cache issues in preview.
+- City operating rules (hours, emergency numbers, targets, intake options, grant limits, hubs, privacy, go-live) live in `city_settings.settings` JSONB, merged over defaults by `src/lib/city-settings.ts`; supervisors write only via `update_city_settings` RPC, residents read only `public_city_config(slug)`. Why: every city configures itself without code changes.
+- Grant RPCs read limits from `city_settings` via `city_grant_limit`; `grantRouting` takes the same limits. Why: one source of truth per city.

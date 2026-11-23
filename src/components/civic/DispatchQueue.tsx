@@ -3,7 +3,8 @@ import { Car, CheckCircle2, Home, Loader2, MapPin, Navigation, RefreshCw, Triang
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import { BARRIERS, LIVING_SITUATIONS, SERVICE_HUBS, WELLNESS_NEEDS, distanceKm, labelFor, money, timeAgo, urgencyScore } from "@/lib/civic";
+import { useCitySettings } from "@/lib/use-city-settings";
+import { distanceKm, labelFor, money, timeAgo, urgencyScore } from "@/lib/civic";
 import { useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +16,9 @@ type DR = Tables<"diversion_requests">;
 type Item = { kind: "wellness"; row: WC; score: number; km: number | null } | { kind: "diversion"; row: DR; score: number; km: number | null };
 
 export function DispatchQueue() {
-  const { session } = useSession();
+  const { session, profile: staff } = useSession();
+  const { settings: cfg } = useCitySettings(staff?.city_id);
+  const BARRIERS = cfg.intake.barriers, LIVING_SITUATIONS = cfg.intake.livingSituations, WELLNESS_NEEDS = cfg.intake.wellnessNeeds;
   const [checks, setChecks] = useState<WC[]>([]);
   const [requests, setRequests] = useState<DR[]>([]);
   const [loading, setLoading] = useState(true);
@@ -152,7 +155,9 @@ export function DispatchQueue() {
 function RideDialog({ check, onClose }: { check: WC | null; onClose: () => void }) {
   const { session, profile } = useSession();
   const [type, setType] = useState("outreach_van");
-  const [dest, setDest] = useState<string>(SERVICE_HUBS[0]);
+  const { settings: cfg } = useCitySettings(profile?.city_id);
+  const SERVICE_HUBS = cfg.hubs.map((h) => h.name).filter(Boolean);
+  const [dest, setDest] = useState<string>("");
   const [busy, setBusy] = useState(false);
 
   async function dispatch() {
@@ -164,7 +169,7 @@ function RideDialog({ check, onClose }: { check: WC | null; onClose: () => void 
       ride_type: type,
       pickup_lat: check.lat,
       pickup_lng: check.lng,
-      destination: dest,
+      destination: dest || SERVICE_HUBS[0] || "Other",
       dispatched_by: session.user.id,
     });
     setBusy(false);
@@ -189,7 +194,7 @@ function RideDialog({ check, onClose }: { check: WC | null; onClose: () => void 
         </div>
         <div className="mt-2 text-sm font-semibold">Destination</div>
         <div className="grid gap-2">
-          {SERVICE_HUBS.map((h) => <ChoiceButton key={h} selected={dest === h} onClick={() => setDest(h)}>{h}</ChoiceButton>)}
+          {SERVICE_HUBS.map((h) => <ChoiceButton key={h} selected={(dest || SERVICE_HUBS[0]) === h} onClick={() => setDest(h)}>{h}</ChoiceButton>)}
         </div>
         <Button className="mt-2 h-12" disabled={busy} onClick={dispatch}>{busy && <Loader2 className="animate-spin" />} Confirm dispatch</Button>
       </DialogContent>

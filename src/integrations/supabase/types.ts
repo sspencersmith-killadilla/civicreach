@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          city_id: string
+          created_at: string
+          details: Json
+          id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          city_id: string
+          created_at?: string
+          details?: Json
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          city_id?: string
+          created_at?: string
+          details?: Json
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cities: {
         Row: {
           created_at: string
@@ -43,6 +78,38 @@ export type Database = {
           status?: string
         }
         Relationships: []
+      }
+      city_settings: {
+        Row: {
+          city_id: string
+          go_live: boolean
+          settings: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          city_id: string
+          go_live?: boolean
+          settings?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          city_id?: string
+          go_live?: boolean
+          settings?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "city_settings_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: true
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       client_documents: {
         Row: {
@@ -447,6 +514,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      city_grant_limit: {
+        Args: { _city: string; _default: number; _key: string }
+        Returns: number
+      }
       current_city_id: { Args: never; Returns: string }
       decide_micro_grant: {
         Args: { _approve: boolean; _grant_id: string }
@@ -495,6 +566,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      public_city_config: { Args: { _slug: string }; Returns: Json }
       staff_role: { Args: { _uid: string }; Returns: string }
       submit_micro_grant: {
         Args: {
@@ -518,6 +590,22 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "micro_grants"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      update_city_settings: {
+        Args: { _go_live: boolean; _settings: Json }
+        Returns: {
+          city_id: string
+          go_live: boolean
+          settings: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "city_settings"
           isOneToOne: true
           isSetofReturn: false
         }

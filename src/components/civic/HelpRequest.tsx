@@ -3,7 +3,9 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { BARRIERS, LIVING_SITUATIONS, makeTrackingCode, money } from "@/lib/civic";
+import { makeTrackingCode, money } from "@/lib/civic";
+import { enabled } from "@/lib/city-settings";
+import { usePublicCityConfig } from "@/lib/use-city-settings";
 import type { CitySummary } from "@/lib/cities";
 import { ChoiceButton, TrackingCode } from "@/components/civic/ui";
 import { Slider } from "@/components/ui/slider";
@@ -17,6 +19,8 @@ const CONTACTS = [
 ] as const;
 
 export function HelpRequest({ city }: { city: CitySummary }) {
+  const { settings: cfg } = usePublicCityConfig(city.slug);
+  const LIVING_SITUATIONS = enabled(cfg.intake.livingSituations), BARRIERS = enabled(cfg.intake.barriers);
   const [step, setStep] = useState(0);
   const [living, setLiving] = useState("");
   const [barrier, setBarrier] = useState("");
@@ -25,7 +29,7 @@ export function HelpRequest({ city }: { city: CitySummary }) {
   const [contact, setContact] = useState("");
   const [busy, setBusy] = useState(false);
   const [code, setCode] = useState<string | null>(null);
-  const canNext = [living, barrier, amount >= 50, method && contact.trim().length > 2][step];
+  const canNext = [living, barrier, amount >= cfg.grants.min && amount <= cfg.grants.max, method && contact.trim().length > 2][step];
 
   async function submit() {
     setBusy(true);
@@ -46,7 +50,7 @@ export function HelpRequest({ city }: { city: CitySummary }) {
   if (code) return (
     <Shell>
       <h1 className="text-3xl font-bold tracking-tight">Request received</h1>
-      <p className="mt-2 text-muted-foreground">A {city.name} housing navigator will reach out using the contact method you chose, usually within one business day.</p>
+      <p className="mt-2 text-muted-foreground">A {city.name} housing navigator will reach out using the contact method you chose, usually {cfg.targets.housingFollowUp}.</p>
       <div className="mt-6"><TrackingCode code={code} /></div>
       <Link to="/c/$citySlug" params={{ citySlug: city.slug }} className="mt-6 flex min-h-12 items-center justify-center rounded-xl border border-border font-semibold hover:bg-muted">Back to {city.name}</Link>
     </Shell>
@@ -65,8 +69,8 @@ export function HelpRequest({ city }: { city: CitySummary }) {
         <Step title="About how much would solve it?">
           <div className="rounded-2xl border border-border bg-card p-6">
             <div className="text-center text-5xl font-extrabold tracking-tight">{money(amount)}</div>
-            <Slider className="mt-8" min={50} max={1000} step={10} value={[amount]} onValueChange={(v) => setAmount(v[0] ?? 50)} aria-label="Amount needed" />
-            <div className="mt-3 flex justify-between text-sm text-muted-foreground"><span>$50</span><span>$1,000</span></div>
+            <Slider className="mt-8" min={cfg.grants.min} max={cfg.grants.max} step={10} value={[amount]} onValueChange={(v) => setAmount(v[0] ?? cfg.grants.min)} aria-label="Amount needed" />
+            <div className="mt-3 flex justify-between text-sm text-muted-foreground"><span>{money(cfg.grants.min)}</span><span>{money(cfg.grants.max)}</span></div>
           </div>
           <p className="text-sm text-muted-foreground">A best guess is fine — your navigator will confirm the details.</p>
         </Step>

@@ -76,3 +76,7 @@ There is intentionally no open staff-registration form. Do not share supervisor 
 ## 5. Self-hosting
 
 See [SELF_HOSTING.md](./SELF_HOSTING.md) for environment, schema, storage, email, deployment, and verification steps.
+
+## 6. City settings and go-live
+
+Supervisors open **Console → Settings** to configure the city: public contact details, outreach hours and after-hours message, emergency and crisis numbers, escalation rules, response targets, intake options (turn on/off or add your own), grant limits and payment methods, service hubs, zones, alert contacts, consent wording, and retention. The **Launch readiness** checklist tracks what is left. The resident link shows a pilot notice until a supervisor presses **Go live**. Every settings change and grant decision is recorded in the audit log.

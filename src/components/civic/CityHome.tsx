@@ -1,10 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Clock, HeartHandshake, Home, MapPin, Phone, ShieldCheck } from "lucide-react";
 import type { CitySummary } from "@/lib/cities";
+import { usePublicCityConfig } from "@/lib/use-city-settings";
+import { isOpenNow } from "@/lib/city-settings";
 
 export function CityHome({ city }: { city: CitySummary }) {
+  const { settings: s, goLive } = usePublicCityConfig(city.slug);
+  const open = isOpenNow(s);
   return (
     <main className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:pt-14">
+      {!goLive && city.slug !== "demo" && <p className="mb-6 rounded-xl bg-amber-soft p-3 text-sm font-medium text-amber-foreground">{city.name} is piloting this service. Requests may not be monitored yet.</p>}
+      {!open && <p className="mb-6 rounded-xl border border-border bg-card p-3 text-sm">{s.hours.afterHoursMessage}</p>}
       <section className="max-w-2xl">
         <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-teal"><MapPin className="size-4" /> {city.name} · {city.region}</p>
         <h1 className="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">How can we help today?</h1>
@@ -24,7 +30,7 @@ export function CityHome({ city }: { city: CitySummary }) {
         {[
           { icon: Clock, t: "Fast response", d: "Wellness requests go directly to the city’s live outreach queue." },
           { icon: ShieldCheck, t: "Private to this city", d: "Your details are seen only by this city’s authorized outreach staff." },
-          { icon: Phone, t: "In crisis right now?", d: "Call or text 988 for immediate support, any time." },
+          { icon: Phone, t: "In crisis right now?", d: `For immediate danger call ${s.emergency.emergencyNumber}. For crisis support call or text ${s.emergency.crisisLine}.` },
         ].map((item) => (
           <div key={item.t} className="rounded-xl border border-border bg-card p-5">
             <item.icon className="size-5 text-teal" />
@@ -34,6 +40,7 @@ export function CityHome({ city }: { city: CitySummary }) {
         ))}
       </section>
       {city.slug === "demo" && <p className="mt-8 text-center text-sm text-muted-foreground">This is a sample workspace. Requests here are for demonstration, not a live city service.</p>}
+      <p className="mt-6 text-center text-xs text-muted-foreground">{s.emergency.disclaimer}{s.profile.contactPhone || s.profile.contactEmail ? ` Questions: ${[s.profile.contactPhone, s.profile.contactEmail].filter(Boolean).join(" · ")}` : ""}</p>
     </main>
   );
 }

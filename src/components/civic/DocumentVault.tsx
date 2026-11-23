@@ -3,7 +3,9 @@ import { AlertTriangle, Eye, FileLock2, Loader2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import { DOC_TYPES, labelFor } from "@/lib/civic";
+import { labelFor } from "@/lib/civic";
+import { enabled } from "@/lib/city-settings";
+import { useCitySettings } from "@/lib/use-city-settings";
 import { useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +26,8 @@ function expiryState(d: string | null) {
 
 export function DocumentVault() {
   const { session, profile } = useSession();
+  const { settings: cfg } = useCitySettings(profile?.city_id);
+  const DOC_TYPES = cfg.intake.docTypes;
   const [docs, setDocs] = useState<Doc[]>([]);
   const [alias, setAlias] = useState("");
   const [type, setType] = useState("id");
@@ -88,7 +92,7 @@ export function DocumentVault() {
           <Input id="alias" className="h-12" placeholder="e.g. RiverPark-JM" value={alias} onChange={(e) => setAlias(e.target.value)} maxLength={60} />
         </div>
         <div className="flex flex-wrap gap-2">
-          {DOC_TYPES.map((t) => <Chip key={t.id} selected={type === t.id} onClick={() => setType(t.id)}>{t.label}</Chip>)}
+          {enabled(DOC_TYPES).map((t) => <Chip key={t.id} selected={type === t.id} onClick={() => setType(t.id)}>{t.label}</Chip>)}
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="grid gap-2">

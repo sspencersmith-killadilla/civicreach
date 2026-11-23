@@ -3,7 +3,9 @@ import { Loader2, ShieldCheck, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import { AUTO_APPROVE_LIMIT, BARRIERS, LIVING_SITUATIONS, grantRouting, labelFor, money, timeAgo, type StaffRole } from "@/lib/civic";
+import { useCitySettings } from "@/lib/use-city-settings";
+import { enabled, type CitySettings } from "@/lib/city-settings";
+import { grantRouting, labelFor, money, timeAgo, type StaffRole } from "@/lib/civic";
 import { useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +18,7 @@ type Grant = Tables<"micro_grants">;
 export function GrantApprover() {
   const { profile } = useSession();
   const role: StaffRole = profile?.role ?? "outreach";
+  const { settings: cfg } = useCitySettings(profile?.city_id);
   const [fund, setFund] = useState<Tables<"diversion_fund"> | null>(null);
   const [requests, setRequests] = useState<DR[]>([]);
   const [grants, setGrants] = useState<Grant[]>([]);
@@ -48,7 +51,7 @@ export function GrantApprover() {
     <div>
       <h2 className="text-2xl font-bold tracking-tight">Diversion micro-grants</h2>
       <p className="text-sm text-muted-foreground">
-        Outreach workers auto-approve up to {money(AUTO_APPROVE_LIMIT)}. Larger grants go to a supervisor.
+        Outreach workers auto-approve up to {money(cfg.grants.workerLimit)}. Larger grants go to a supervisor.
       </p>
 
       <div className="mt-5 rounded-2xl bg-primary p-5 text-primary-foreground">
@@ -95,7 +98,7 @@ export function GrantApprover() {
         <h3 className="font-semibold">Open requests ({requests.filter((r) => !pendingIds.has(r.id)).length})</h3>
         <ul className="mt-3 grid gap-3">
           {requests.filter((r) => !pendingIds.has(r.id)).map((r) => (
-            <RequestCard key={r.id} r={r} role={role} onDone={load} />
+            <RequestCard key={r.id} r={r} role={role} onDone={load} cfg={cfg} />
           ))}
         </ul>
       </section>
@@ -103,13 +106,14 @@ export function GrantApprover() {
   );
 }
 
-function RequestCard({ r, role, onDone }: { r: DR; role: StaffRole; onDone: () => void }) {
+function RequestCard({ r, role, onDone, cfg }: { r: DR; role: StaffRole; onDone: () => void; cfg: CitySettings }) {
+  const BARRIERS = cfg.intake.barriers, LIVING_SITUATIONS = cfg.intake.livingSituations;
   const [amount, setAmount] = useState(String(r.amount_requested));
   const [payee, setPayee] = useState("");
-  const [method, setMethod] = useState("vendor_check");
+  const [method, setMethod] = useState(enabled(cfg.grants.paymentMethods)[0]?.id ?? "vendor_check");
   const [busy, setBusy] = useState(false);
   const n = Number(amount);
-  const route = grantRouting(n, role);
+  const route = grantRouting(n, role, cfg.grants);
   const contact = r.contact_info as { method?: string; value?: string } | null;
 
   async function submit() {
@@ -140,11 +144,7 @@ function RequestCard({ r, role, onDone }: { r: DR; role: StaffRole; onDone: () =
         <Select value={method} onValueChange={setMethod}>
           <SelectTrigger className="h-12 w-full"><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="vendor_check">Vendor check</SelectItem>
-            <SelectItem value="ach_landlord">ACH to landlord</SelectItem>
-            <SelectItem value="utility_direct">Utility direct pay</SelectItem>
-            <SelectItem value="prepaid_card">Prepaid card</SelectItem>
-            <SelectItem value="transit_voucher">Transit voucher</SelectItem>
+            {enabled(cfg.grants.paymentMethods).map((m) => <SelectItem key={m.id} value={m.id}>{m.label}</SelectItem>)}
           </SelectContent>
         </Select>
       </div>

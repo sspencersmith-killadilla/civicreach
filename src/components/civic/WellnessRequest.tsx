@@ -3,16 +3,19 @@ import { useEffect, useState } from "react";
 import { Camera, Crosshair, Loader2, MapPin, Timer } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { WELLNESS_NEEDS, makeTrackingCode } from "@/lib/civic";
+import { makeTrackingCode } from "@/lib/civic";
+import { enabled } from "@/lib/city-settings";
+import { usePublicCityConfig } from "@/lib/use-city-settings";
 import type { CitySummary } from "@/lib/cities";
 import { Chip, TrackingCode } from "@/components/civic/ui";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-const SLA_MIN = 45;
 
 export function WellnessRequest({ city }: { city: CitySummary }) {
+  const { settings: cfg } = usePublicCityConfig(city.slug);
+  const WELLNESS_NEEDS = enabled(cfg.intake.wellnessNeeds);
   const [location, setLocation] = useState("");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
@@ -91,6 +94,8 @@ export function WellnessRequest({ city }: { city: CitySummary }) {
 }
 
 function Confirmation({ city, code, at }: { city: CitySummary; code: string; at: number }) {
+  const { settings: cfg } = usePublicCityConfig(city.slug);
+  const SLA_MIN = cfg.targets.urgentMinutes;
   const [now, setNow] = useState(at);
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const left = Math.max(0, SLA_MIN * 60 - Math.floor((now - at) / 1000));

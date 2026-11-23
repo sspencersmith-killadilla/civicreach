@@ -22,6 +22,13 @@
       "when": 1795392351628,
       "tag": "0002_add_isolated_city_workspaces",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795437239560,
+      "tag": "0003_city_settings",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,9 @@ import { CloudOff, CloudUpload, Crosshair, Loader2, Lock, CheckCircle2 } from "l
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import { SERVICE_CHIPS, timeAgo } from "@/lib/civic";
+import { timeAgo } from "@/lib/civic";
+import { enabled } from "@/lib/city-settings";
+import { useCitySettings } from "@/lib/use-city-settings";
 import { enqueue, readQueue, subscribeQueue, syncQueue } from "@/lib/offline-queue";
 import { useOnline, useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
@@ -28,6 +30,8 @@ function getQueue(cityId: string) {
 export function EncounterLogger() {
   const online = useOnline();
   const { profile } = useSession();
+  const { settings: cfg } = useCitySettings(profile?.city_id);
+  const SERVICE_CHIPS = enabled(cfg.intake.serviceChips).map((c) => c.label);
   const cityId = profile?.city_id ?? "";
   const getSnapshot = useCallback(() => getQueue(cityId), [cityId]);
   const queue = useSyncExternalStore(subscribeQueue, getSnapshot, () => EMPTY);

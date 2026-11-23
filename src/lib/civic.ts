@@ -5,9 +5,12 @@ export const AUTO_APPROVE_LIMIT = 250;
 export const MAX_GRANT = 1000;
 
 /** Outreach workers auto-approve up to $250; $251–$1,000 needs a supervisor (supervisors approve directly). */
-export function grantRouting(amount: number, role: StaffRole): "approve" | "supervisor_review" | "invalid" {
-  if (!Number.isFinite(amount) || amount <= 0 || amount > MAX_GRANT) return "invalid";
-  if (amount <= AUTO_APPROVE_LIMIT || role === "supervisor") return "approve";
+export type GrantLimits = { min: number; max: number; workerLimit: number };
+export const DEFAULT_GRANT_LIMITS: GrantLimits = { min: 1, max: MAX_GRANT, workerLimit: AUTO_APPROVE_LIMIT };
+/** Mirrors submit_micro_grant: limits come from each city's settings. */
+export function grantRouting(amount: number, role: StaffRole, limits: GrantLimits = DEFAULT_GRANT_LIMITS): "approve" | "supervisor_review" | "invalid" {
+  if (!Number.isFinite(amount) || amount <= 0 || amount < limits.min || amount > limits.max) return "invalid";
+  if (amount <= limits.workerLimit || role === "supervisor") return "approve";
   return "supervisor_review";
 }
 

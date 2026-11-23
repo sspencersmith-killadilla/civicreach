@@ -6,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { makeTrackingCode } from "@/lib/civic";
 import { enabled } from "@/lib/city-settings";
 import { usePublicCityConfig } from "@/lib/use-city-settings";
+import { looksAutomated } from "@/lib/bot-guard";
+import { useLang } from "@/lib/i18n";
+import { LanguageToggle } from "@/components/civic/LanguageToggle";
 import type { CitySummary } from "@/lib/cities";
 import { Chip, TrackingCode } from "@/components/civic/ui";
 import { Input } from "@/components/ui/input";
@@ -23,6 +26,9 @@ export function WellnessRequest({ city }: { city: CitySummary }) {
   const [notes, setNotes] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
+  const [startedAt] = useState(() => Date.now());
+  const { lang, setLang, t } = useLang(cfg.languages.spanish);
   const [done, setDone] = useState<{ code: string; at: number } | null>(null);
 
   function pin() {
@@ -38,6 +44,7 @@ export function WellnessRequest({ city }: { city: CitySummary }) {
   async function submit() {
     setBusy(true);
     const code = makeTrackingCode("W");
+    if (looksAutomated(honeypot, startedAt)) { setBusy(false); setDone({ code, at: Date.now() }); return; }
     let photo_path: string | null = null;
     if (photo) {
       photo_path = `${city.id}/${code}/${Date.now()}-${photo.name.replace(/[^\w.-]/g, "_")}`;
@@ -63,9 +70,10 @@ export function WellnessRequest({ city }: { city: CitySummary }) {
 
   return (
     <main className="mx-auto max-w-xl px-4 pb-16 pt-8">
-      <p className="mb-2 text-sm font-semibold text-teal">{city.name} civilian outreach</p>
-      <h1 className="text-3xl font-bold tracking-tight">Request a wellness check</h1>
-      <p className="mt-2 text-muted-foreground">A trained civilian outreach team — not police — will check on the person with care.</p>
+      <div className="mb-2 flex items-center justify-between gap-3"><p className="text-sm font-semibold text-teal">{city.name} civilian outreach</p>{cfg.languages.spanish && <LanguageToggle lang={lang} setLang={setLang} />}</div>
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-px w-px opacity-0" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+      <h1 className="text-3xl font-bold tracking-tight">{t("Request a wellness check")}</h1>
+      <p className="mt-2 text-muted-foreground">{t("A trained civilian outreach team — not police — will check on the person with care.")}</p>
       <section className="mt-8">
         <h2 className="font-semibold">Where are they?</h2>
         <div className="mt-3 flex gap-2">

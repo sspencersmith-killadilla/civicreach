@@ -40,3 +40,7 @@ use the editor.
 - PWA is manifest-only (no service worker) to avoid stale-cache issues in preview.
 - City operating rules (hours, emergency numbers, targets, intake options, grant limits, hubs, privacy, go-live) live in `city_settings.settings` JSONB, merged over defaults by `src/lib/city-settings.ts`; supervisors write only via `update_city_settings` RPC, residents read only `public_city_config(slug)`. Why: every city configures itself without code changes.
 - Grant RPCs read limits from `city_settings` via `city_grant_limit`; `grantRouting` takes the same limits. Why: one source of truth per city.
+
+- Retention cleanup runs only through `purge_city_records` (nightly pg_cron for live cities, supervisor `purge_my_city_records`); grant-linked requests are never purged. Why: keep financial records.
+- Resident status lookup goes only through `public_request_status(slug, code)`, returning kind/status/date. Why: residents can never read request contents.
+- Resident translations are keyed by English text in `src/lib/i18n.ts`; CSV exports exclude clinical notes and contact info. Why: graceful fallback and privacy by default.

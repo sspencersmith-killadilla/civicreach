@@ -14,7 +14,7 @@ import { Switch } from "@/components/ui/switch";
 
 const SECTIONS = [
   ["profile", "City profile"], ["hours", "Hours"], ["emergency", "Emergency"], ["targets", "Response targets"],
-  ["intake", "Intake forms"], ["grants", "Grant rules"], ["hubs", "Service hubs"], ["team", "Zones & alerts"], ["privacy", "Privacy"],
+  ["intake", "Intake forms"], ["grants", "Grant rules"], ["hubs", "Service hubs"], ["team", "Zones & alerts"], ["privacy", "Privacy"], ["languages", "Languages"], ["integrations", "Integrations"],
 ] as const;
 type Section = (typeof SECTIONS)[number][0];
 
@@ -103,6 +103,27 @@ export function CitySettingsPanel() {
         <Num label="Outreach worker approval limit (USD)" value={s.grants.workerLimit} onChange={(v) => set("grants", { workerLimit: v })} />
         <Options title="Payment methods" list={s.grants.paymentMethods} onChange={(l) => set("grants", { paymentMethods: l })} />
       </>}
+      {section === "languages" && <>
+        <Toggle label="Offer Spanish on resident pages" checked={s.languages.spanish} onChange={(v) => set("languages", { spanish: v })} />
+        <p className="text-sm text-muted-foreground">Residents see an Español button. Option labels you add above appear as you typed them.</p>
+      </>}
+      {section === "integrations" && <>
+        <p className="text-sm text-muted-foreground">Connect outside services your city already uses. Until a provider is connected, staff see these details and complete the step by hand.</p>
+        <fieldset className="grid gap-3 rounded-xl border border-border p-3"><legend className="px-1 font-semibold">Text messages</legend>
+          <Pick label="Provider" value={s.integrations.sms.provider} options={[["none", "Not connected"], ["twilio", "Twilio"], ["other", "Other"]]} onChange={(v) => set("integrations", { sms: { ...s.integrations.sms, provider: v } })} />
+          <Field label="Sending phone number" value={s.integrations.sms.fromNumber} onChange={(v) => set("integrations", { sms: { ...s.integrations.sms, fromNumber: v } })} />
+          <Toggle label="Text residents when their request status changes" checked={s.integrations.sms.residentUpdates} onChange={(v) => set("integrations", { sms: { ...s.integrations.sms, residentUpdates: v } })} />
+        </fieldset>
+        <fieldset className="grid gap-3 rounded-xl border border-border p-3"><legend className="px-1 font-semibold">Rides</legend>
+          <Pick label="Provider" value={s.integrations.rides.provider} options={[["none", "City van only"], ["uber_health", "Uber Health"], ["lyft_concierge", "Lyft Concierge"], ["paratransit", "Municipal paratransit"], ["other", "Other"]]} onChange={(v) => set("integrations", { rides: { ...s.integrations.rides, provider: v } })} />
+          <Field label="Booking link for staff" value={s.integrations.rides.bookingUrl} onChange={(v) => set("integrations", { rides: { ...s.integrations.rides, bookingUrl: v } })} />
+          <Field label="Booking phone" value={s.integrations.rides.phone} onChange={(v) => set("integrations", { rides: { ...s.integrations.rides, phone: v } })} />
+        </fieldset>
+        <fieldset className="grid gap-3 rounded-xl border border-border p-3"><legend className="px-1 font-semibold">Grant payments</legend>
+          <Pick label="Provider" value={s.integrations.payments.provider} options={[["manual", "Manual (finance office)"], ["bill_com", "Bill.com"], ["prepaid_cards", "Prepaid card program"], ["other", "Other"]]} onChange={(v) => set("integrations", { payments: { ...s.integrations.payments, provider: v } })} />
+          <Area label="Payment steps shown after approval" value={s.integrations.payments.instructions} onChange={(v) => set("integrations", { payments: { ...s.integrations.payments, instructions: v } })} />
+        </fieldset>
+      </>}
       {section === "hubs" && <>
         {s.hubs.map((h, i) => <div key={i} className="grid gap-2 rounded-xl border border-border p-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
           <Input className="h-12" placeholder="Name" value={h.name} onChange={(e) => setS((p) => ({ ...p, hubs: p.hubs.map((x, j) => j === i ? { ...x, name: e.target.value } : x) }))} />
@@ -138,6 +159,10 @@ function Num({ label, value, onChange }: { label: string; value: number; onChang
 function Area({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   const id = label.replace(/\W+/g, "-");
   return <div className="grid gap-2"><Label htmlFor={id}>{label}</Label><Textarea id={id} value={value} onChange={(e) => onChange(e.target.value)} /></div>;
+}
+function Pick({ label, value, options, onChange }: { label: string; value: string; options: [string, string][]; onChange: (v: string) => void }) {
+  const id = label.replace(/\W+/g, "-") + options[0]?.[0];
+  return <div className="grid gap-2"><Label htmlFor={id}>{label}</Label><select id={id} className="h-12 rounded-md border border-input bg-background px-3" value={value} onChange={(e) => onChange(e.target.value)}>{options.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></div>;
 }
 function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return <label className="flex min-h-12 items-center gap-3"><Switch checked={checked} onCheckedChange={onChange} />{label}</label>;

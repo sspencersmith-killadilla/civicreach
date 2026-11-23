@@ -20,6 +20,7 @@ import { Route as WellnessRouteImport } from './routes/wellness'
 import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticated/console'
 import { Route as CCitySlugIndexRouteImport } from './routes/c/$citySlug/index'
 import { Route as CCitySlugHelpRouteImport } from './routes/c/$citySlug/help'
+import { Route as CCitySlugStatusRouteImport } from './routes/c/$citySlug/status'
 import { Route as CCitySlugWellnessRouteImport } from './routes/c/$citySlug/wellness'
 
 const IndexRoute = IndexRouteImport.update({
@@ -76,6 +77,11 @@ const CCitySlugHelpRoute = CCitySlugHelpRouteImport.update({
   path: '/c/$citySlug/help',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CCitySlugStatusRoute = CCitySlugStatusRouteImport.update({
+  id: '/c/$citySlug/status',
+  path: '/c/$citySlug/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CCitySlugWellnessRoute = CCitySlugWellnessRouteImport.update({
   id: '/c/$citySlug/wellness',
   path: '/c/$citySlug/wellness',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/wellness': typeof WellnessRoute
   '/console': typeof AuthenticatedConsoleRoute
   '/c/$citySlug/help': typeof CCitySlugHelpRoute
+  '/c/$citySlug/status': typeof CCitySlugStatusRoute
   '/c/$citySlug/wellness': typeof CCitySlugWellnessRoute
   '/c/$citySlug/': typeof CCitySlugIndexRoute
 }
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/wellness': typeof WellnessRoute
   '/console': typeof AuthenticatedConsoleRoute
   '/c/$citySlug/help': typeof CCitySlugHelpRoute
+  '/c/$citySlug/status': typeof CCitySlugStatusRoute
   '/c/$citySlug/wellness': typeof CCitySlugWellnessRoute
   '/c/$citySlug': typeof CCitySlugIndexRoute
 }
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/wellness': typeof WellnessRoute
   '/_authenticated/console': typeof AuthenticatedConsoleRoute
   '/c/$citySlug/help': typeof CCitySlugHelpRoute
+  '/c/$citySlug/status': typeof CCitySlugStatusRoute
   '/c/$citySlug/wellness': typeof CCitySlugWellnessRoute
   '/c/$citySlug/': typeof CCitySlugIndexRoute
 }
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/wellness'
     | '/console'
     | '/c/$citySlug/help'
+    | '/c/$citySlug/status'
     | '/c/$citySlug/wellness'
     | '/c/$citySlug/'
   fileRoutesByTo: FileRoutesByTo
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/wellness'
     | '/console'
     | '/c/$citySlug/help'
+    | '/c/$citySlug/status'
     | '/c/$citySlug/wellness'
     | '/c/$citySlug'
   id:
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/wellness'
     | '/_authenticated/console'
     | '/c/$citySlug/help'
+    | '/c/$citySlug/status'
     | '/c/$citySlug/wellness'
     | '/c/$citySlug/'
   fileRoutesById: FileRoutesById
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   HelpRoute: typeof HelpRoute
   WellnessRoute: typeof WellnessRoute
   CCitySlugHelpRoute: typeof CCitySlugHelpRoute
+  CCitySlugStatusRoute: typeof CCitySlugStatusRoute
   CCitySlugWellnessRoute: typeof CCitySlugWellnessRoute
   CCitySlugIndexRoute: typeof CCitySlugIndexRoute
 }
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CCitySlugHelpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/c/$citySlug/status': {
+      id: '/c/$citySlug/status'
+      path: '/c/$citySlug/status'
+      fullPath: '/c/$citySlug/status'
+      preLoaderRoute: typeof CCitySlugStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/c/$citySlug/wellness': {
       id: '/c/$citySlug/wellness'
       path: '/c/$citySlug/wellness'
@@ -290,6 +310,7 @@ const rootRouteChildren: RootRouteChildren = {
   HelpRoute: HelpRoute,
   WellnessRoute: WellnessRoute,
   CCitySlugHelpRoute: CCitySlugHelpRoute,
+  CCitySlugStatusRoute: CCitySlugStatusRoute,
   CCitySlugWellnessRoute: CCitySlugWellnessRoute,
   CCitySlugIndexRoute: CCitySlugIndexRoute,
 }

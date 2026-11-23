@@ -567,6 +567,13 @@ export type Database = {
         }
       }
       public_city_config: { Args: { _slug: string }; Returns: Json }
+      public_request_status: {
+        Args: { _code: string; _slug: string }
+        Returns: Json
+      }
+      purge_all_cities: { Args: never; Returns: undefined }
+      purge_city_records: { Args: { _city: string }; Returns: Json }
+      purge_my_city_records: { Args: never; Returns: Json }
       staff_role: { Args: { _uid: string }; Returns: string }
       submit_micro_grant: {
         Args: {

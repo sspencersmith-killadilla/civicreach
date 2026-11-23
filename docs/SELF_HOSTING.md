@@ -150,3 +150,8 @@ bunx vitest run
 - Offline encounter storage is not a substitute for an encrypted city-managed device or a complete offline application cache.
 - Add abuse/rate-limit controls appropriate for your public exposure and monitor signup and public submissions.
 - Complete a formal security and privacy review before using real client data.
+
+## Production options
+
+- Set `VITE_DEMO_MODE=off` to hide the Demo City role switcher on your deployment.
+- Nightly retention cleanup needs the `pg_cron` extension; it runs at 03:17 server time for cities that are live.

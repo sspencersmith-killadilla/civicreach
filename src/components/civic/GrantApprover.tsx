@@ -52,6 +52,7 @@ export function GrantApprover() {
       <h2 className="text-2xl font-bold tracking-tight">Diversion micro-grants</h2>
       <p className="text-sm text-muted-foreground">
         Outreach workers auto-approve up to {money(cfg.grants.workerLimit)}. Larger grants go to a supervisor.
+        {cfg.integrations.payments.instructions && <span className="mt-2 block whitespace-pre-line rounded-lg bg-muted p-2 text-foreground">Payment steps: {cfg.integrations.payments.instructions}</span>}
       </p>
 
       <div className="mt-5 rounded-2xl bg-primary p-5 text-primary-foreground">

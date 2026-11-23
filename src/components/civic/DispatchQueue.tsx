@@ -196,6 +196,7 @@ function RideDialog({ check, onClose }: { check: WC | null; onClose: () => void 
         <div className="grid gap-2">
           {SERVICE_HUBS.map((h) => <ChoiceButton key={h} selected={(dest || SERVICE_HUBS[0]) === h} onClick={() => setDest(h)}>{h}</ChoiceButton>)}
         </div>
+        {(cfg.integrations.rides.bookingUrl || cfg.integrations.rides.phone) && <div className="rounded-xl bg-muted p-3 text-sm">Book the ride with your city's provider: {cfg.integrations.rides.bookingUrl && <a className="font-semibold text-teal underline" href={cfg.integrations.rides.bookingUrl} target="_blank" rel="noreferrer">open booking</a>}{cfg.integrations.rides.bookingUrl && cfg.integrations.rides.phone && " · "}{cfg.integrations.rides.phone && <a className="font-semibold text-teal underline" href={`tel:${cfg.integrations.rides.phone}`}>{cfg.integrations.rides.phone}</a>}</div>}
         <Button className="mt-2 h-12" disabled={busy} onClick={dispatch}>{busy && <Loader2 className="animate-spin" />} Confirm dispatch</Button>
       </DialogContent>
     </Dialog>

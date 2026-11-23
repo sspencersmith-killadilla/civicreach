@@ -37,12 +37,12 @@ export function Chip({ selected, onClick, children }: { selected: boolean; onCli
   );
 }
 
-export function TrackingCode({ code }: { code: string }) {
+export function TrackingCode({ code, t = (x: string) => x }: { code: string; t?: (s: string) => string }) {
   return (
     <div className="rounded-2xl border-2 border-dashed border-teal bg-teal-soft p-5 text-center">
-      <div className="text-xs font-semibold uppercase tracking-widest text-accent-foreground">Your tracking code</div>
+      <div className="text-xs font-semibold uppercase tracking-widest text-accent-foreground">{t("Your tracking code")}</div>
       <div className="mt-1 font-mono text-4xl font-semibold tracking-[0.3em]">{code}</div>
-      <div className="mt-2 text-sm text-muted-foreground">Write this down or take a screenshot.</div>
+      <div className="mt-2 text-sm text-muted-foreground">{t("Write this down or take a screenshot.")}</div>
     </div>
   );
 }

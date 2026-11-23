@@ -16,6 +16,12 @@ export type CitySettings = {
   zones: string[];
   notifications: { alertEmails: string; urgentOnly: boolean };
   privacy: { consent: string; retentionDays: number; recordsContact: string };
+  languages: { spanish: boolean };
+  integrations: {
+    sms: { provider: string; fromNumber: string; residentUpdates: boolean };
+    rides: { provider: string; bookingUrl: string; phone: string };
+    payments: { provider: string; instructions: string };
+  };
 };
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -40,6 +46,12 @@ export function defaultSettings(): CitySettings {
     zones: ["Central"],
     notifications: { alertEmails: "", urgentOnly: true },
     privacy: { consent: "I agree that city outreach staff may store this information to help me.", retentionDays: 1095, recordsContact: "" },
+    languages: { spanish: true },
+    integrations: {
+      sms: { provider: "none", fromNumber: "", residentUpdates: false },
+      rides: { provider: "none", bookingUrl: "", phone: "" },
+      payments: { provider: "manual", instructions: "" },
+    },
   };
 }
 

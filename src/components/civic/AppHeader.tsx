@@ -18,7 +18,8 @@ export function AppHeader() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [busy, setBusy] = useState<DemoRole | null>(null);
   const current: DemoRole = session ? (profile?.role ?? "public") : "public";
-  const showDemo = pathname === "/" || pathname.startsWith("/c/demo") || profile?.city_id === DEMO_CITY.id;
+  const demoAllowed = import.meta.env['VITE_DEMO_MODE'] !== "off";
+  const showDemo = demoAllowed && (pathname === "/" || pathname.startsWith("/c/demo") || profile?.city_id === DEMO_CITY.id);
 
   async function switchTo(role: DemoRole) {
     setBusy(role);

@@ -9,6 +9,8 @@
 
 ## City-configurable production readiness
 - [x] Phase 1: city settings, readiness checklist, go-live, city-driven forms/hours/emergency/targets/grant limits/hubs, audit log
-- [ ] Phase 2: email alerts & invites (needs a sender email domain), bot protection, demo switcher hidden on live domain
-- [ ] Phase 3: reporting, export & retention purge, tracking-code lookup, Spanish
-- [ ] Phase 4: SMS, transport/payment integrations (need provider accounts)
+- [x] Phase 2: bot protection (honeypot + fill time), demo switcher off via VITE_DEMO_MODE=off, audit log viewer
+- [ ] Email alerts & invite emails — blocked: needs a sender email domain the city/owner controls
+- [x] Phase 3: reports, CSV export, retention cleanup (manual + nightly), tracking-code lookup, Spanish resident pages
+- [x] Phase 4: SMS/ride/payment provider settings shown to staff
+- [ ] Live SMS sending and ride/payment API calls — blocked: need each city's provider accounts

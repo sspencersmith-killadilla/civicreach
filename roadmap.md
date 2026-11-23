@@ -14,3 +14,6 @@
 - [x] Phase 3: reports, CSV export, retention cleanup (manual + nightly), tracking-code lookup, Spanish resident pages
 - [x] Phase 4: SMS/ride/payment provider settings shown to staff
 - [x] SMS alerts via each city's Twilio account; rides/payments/custom providers with setup guides shown to staff
+
+## Open source
+- [x] MIT license (City of McKinney) + up-to-date guides

@@ -1,5 +1,7 @@
 # CivicReach city user guide
 
+CivicReach is free and open-source software under the MIT License (see `LICENSE`). Cities may use, modify, self-host, and share it, keeping the copyright notice.
+
 ## 1. Resident requests
 
 Residents do not need accounts.
@@ -7,9 +9,10 @@ Residents do not need accounts.
 1. Open the city-specific URL: `https://YOUR_HOST/c/YOUR_CITY_SLUG`.
 2. Choose **I need help staying housed** or **Request a compassionate wellness check**.
 3. Complete the form and save the six-character tracking code.
+   Use **Check status** (`/c/YOUR_CITY_SLUG/status`) with the code to see progress; it never shows request details. Pages can be switched to Spanish.
 4. For immediate danger, call 911. For crisis support in the United States, call or text 988.
 
-Wellness requests route to civilian outreach, never police. The 45-minute timer is a target configured in the interface, not a guaranteed response time. A city must publish its own actual coverage and escalation policy before launch.
+Wellness requests route to civilian outreach, never police. The response countdown uses the city's configured target and is a target, not a guaranteed response time. A city must publish its own actual coverage and escalation policy before launch.
 
 ## 2. Supervisor setup
 
@@ -30,7 +33,7 @@ There is intentionally no open staff-registration form. Do not share supervisor 
 - Use **Claim & En Route** to assign a wellness check.
 - Use **Resolve** only after the local response protocol is complete.
 - Directions open the device’s maps provider.
-- A ride dispatch record does not contact a transport provider until a real provider integration is configured.
+- The ride window shows the city's booking link, steps, and its own listed providers. Rides are not booked automatically.
 
 ### Field encounters and offline work
 
@@ -44,9 +47,8 @@ There is intentionally no open staff-registration form. Do not share supervisor 
 
 ### Flexible diversion grants
 
-- Requests accept $50–$1,000.
-- Outreach workers can approve grants up to $250.
-- Grants from $251–$1,000 require a diversion supervisor.
+- Defaults: requests up to $1,000; outreach workers approve up to $250; $251–$1,000 needs a supervisor. Each city can change these in Settings.
+- Staff see the city's payment method steps; payments are not sent automatically.
 - Supervisors can directly approve amounts within the maximum.
 - Approved amounts are deducted from the active fund belonging to that city.
 - Always verify the payee and payment method through city procurement and financial controls.
@@ -55,7 +57,7 @@ There is intentionally no open staff-registration form. Do not share supervisor 
 
 - Obtain and record informed consent before every upload.
 - Use a client alias, not a full legal name.
-- Supported document categories are ID, birth certificate, DD-214, and disability verification.
+- Document categories default to ID, birth certificate, DD-214, and disability verification; cities can edit them.
 - Images and PDFs are accepted.
 - Viewing links expire after 60 seconds.
 - Expired documents and documents expiring within 60 days are highlighted.
@@ -64,7 +66,7 @@ There is intentionally no open staff-registration form. Do not share supervisor 
 
 - Assign dispatch ownership, operating hours, after-hours coverage, and emergency escalation.
 - Replace the sample service-hub list with real local destinations.
-- Configure actual transport and notification integrations; the base app only records those actions.
+- Connect email (Resend) and text (Twilio) in **Console → Settings → Integrations** and send a test of each.
 - Test housing and wellness submissions from unmanaged resident devices.
 - Test every staff role and confirm staff cannot open another city’s data.
 - Test offline encounter capture and reconciliation on city-managed devices.
@@ -80,3 +82,12 @@ See [SELF_HOSTING.md](./SELF_HOSTING.md) for environment, schema, storage, email
 ## 6. City settings and go-live
 
 Supervisors open **Console → Settings** to configure the city: public contact details, outreach hours and after-hours message, emergency and crisis numbers, escalation rules, response targets, intake options (turn on/off or add your own), grant limits and payment methods, service hubs, zones, alert contacts, consent wording, and retention. The **Launch readiness** checklist tracks what is left. The resident link shows a pilot notice until a supervisor presses **Go live**. Every settings change and grant decision is recorded in the audit log.
+
+
+## 7. Integrations
+
+In **Console → Settings → Integrations**, supervisors connect the city's own accounts with step-by-step instructions: Resend for alert emails, Twilio for alert texts, plus ride (Uber Health, Lyft, paratransit), payment (Bill.com, prepaid cards, manual), and any local partners. Pasted keys cannot be viewed again, only replaced or removed. Staff invitations are still shared as links, and residents are not texted about status changes.
+
+## 8. Reports, export, and retention
+
+**Console → Reports** shows program totals, CSV downloads (clinical notes and contact details are excluded), the audit log, and **Run cleanup now**. Records older than the city's retention period are also removed nightly for live cities; anything linked to a grant is kept.

@@ -2,6 +2,10 @@
 
 This guide is for a technical administrator deploying the repository outside Lovable’s hosted environment. Review local security, privacy, accessibility, retention, and public-records requirements before handling real client data.
 
+## License
+
+CivicReach is released under the MIT License (see `LICENSE` in the repository root). You may self-host, modify, and redistribute it; keep the copyright and license notice in copies.
+
 ## Architecture
 
 - TanStack Start v1, React 19, TypeScript, Tailwind CSS v4.
@@ -43,7 +47,7 @@ The migration enables realtime for the two dispatch tables. Confirm the publicat
 
 ## 3. Create storage buckets
 
-Both buckets should be private. Object access is controlled by the policies in the schema, including the city ID at the start of every object path.
+Create both buckets as private (`public = false`). Object access is controlled by the policies in the schema, including the city ID at the start of every object path.
 
 ```sql
 insert into storage.buckets (id, name, public)
@@ -53,7 +57,7 @@ values
 on conflict (id) do nothing;
 ```
 
-Residents can only upload wellness photos under an active city’s ID. Staff can only read or manage objects belonging to their assigned city.
+Residents can only upload image files to `<active-city-id>/<tracking-code>/<file>` in `wellness-photos`; nobody can overwrite existing files. Staff can only read or manage objects belonging to their assigned city.
 
 ## 4. Configure environment variables
 
@@ -90,7 +94,7 @@ The development server listens on the port reported by Vite.
 5. Keep email confirmation enabled for city supervisors.
 6. Do not enable anonymous sign-ins.
 
-The app generates supervisor confirmation and staff invitation links for private delivery. With a configured email provider, you can extend this flow to send those links automatically; the base interface does not claim that it has sent email.
+The app generates supervisor confirmation and staff invitation links for private delivery; supervisors copy and share invitation links themselves. Request alert emails and texts are sent through each city's own Resend and Twilio accounts, entered in **Console → Settings → Integrations**. Those keys are stored per city, write-only, and read only on the server.
 
 ## 6. Build and deploy
 
@@ -122,7 +126,7 @@ Requirements for any host:
 5. Open the city resident URL in a signed-out browser and submit test requests.
 6. Confirm the new requests appear only in that city’s console.
 
-The public demo switcher can create shared accounts, but those accounts are confined to Demo City. Hide it in your own presentation layer if desired; do not repurpose those accounts for live operations.
+The public demo switcher can create shared accounts, but those accounts are confined to Demo City. Set `VITE_DEMO_MODE=off` to hide it; do not repurpose those accounts for live operations.
 
 ## 8. Production verification
 
@@ -145,10 +149,10 @@ bunx vitest run
 
 ## Operational limitations to address before a live launch
 
-- No built-in municipal 311, transport-provider, payment-provider, SMS, or push-notification integration is included.
+- Email and SMS alerts work once a city connects its own Resend/Twilio account. There is no built-in municipal 311, automatic ride booking, automatic payment, push notification, emailed staff invitation, or resident status text; staff follow the links and steps each city enters.
 - The response timer is an interface target, not a service-level guarantee.
 - Offline encounter storage is not a substitute for an encrypted city-managed device or a complete offline application cache.
-- Add abuse/rate-limit controls appropriate for your public exposure and monitor signup and public submissions.
+- Public forms include a hidden honeypot field and minimum fill time. Add IP rate limiting or CAPTCHA at your host if your exposure needs it.
 - Complete a formal security and privacy review before using real client data.
 
 ## Production options

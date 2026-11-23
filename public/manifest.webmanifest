@@ -1,6 +1,7 @@
 {
-  "name": "CivicReach",
+  "name": "CivicReach — Every response, in step",
   "short_name": "CivicReach",
+  "description": "City housing diversion, compassionate outreach, and field casework.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f7f9fc",

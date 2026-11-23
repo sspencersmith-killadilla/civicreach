@@ -1,4 +1,4 @@
-// Shared domain rules and labels for CivicReach.
+// Shared domain rules and labels for CivicReach city workspaces.
 export type StaffRole = "outreach" | "supervisor";
 
 export const AUTO_APPROVE_LIMIT = 250;

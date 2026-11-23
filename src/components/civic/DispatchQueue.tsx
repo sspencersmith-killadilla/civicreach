@@ -150,15 +150,16 @@ export function DispatchQueue() {
 }
 
 function RideDialog({ check, onClose }: { check: WC | null; onClose: () => void }) {
-  const { session } = useSession();
+  const { session, profile } = useSession();
   const [type, setType] = useState("outreach_van");
   const [dest, setDest] = useState<string>(SERVICE_HUBS[0]);
   const [busy, setBusy] = useState(false);
 
   async function dispatch() {
-    if (!check || !session) return;
+    if (!check || !session || !profile?.city_id) return;
     setBusy(true);
     const { error } = await supabase.from("ride_dispatches").insert({
+      city_id: profile.city_id,
       wellness_check_id: check.id,
       ride_type: type,
       pickup_lat: check.lat,

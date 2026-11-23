@@ -30,9 +30,11 @@ use the editor.
 <!-- LOVABLE:END -->
 
 ## CivicReach architecture
-- Staff role lives in `profiles.role`, writable only via service role (column-level UPDATE grants); RLS checks use `is_staff()`/`staff_role()` security-definer functions — prevents self-promotion.
-- Fund-moving actions go through `submit_micro_grant` / `decide_micro_grant` RPCs; the client never updates `diversion_fund` directly — keeps approval thresholds server-enforced.
+- City isolation is enforced by `city_id` plus RLS on every operational table and by city-prefixed Storage paths; staff reads and writes must always stay inside `profiles.city_id`.
+- Staff roles live in `user_roles`, separate from editable profiles; `is_staff()` / `staff_role()` use security-definer functions to prevent self-promotion. New auth users have no city role until trusted provisioning or invitation completes.
+- Public resident URLs use `/c/<city-slug>`; public users may insert into active cities but cannot read requests back.
+- Fund-moving actions go through city-scoped `submit_micro_grant` / `decide_micro_grant` RPCs; the client never updates `diversion_fund` directly.
 - Grant threshold logic is mirrored in `src/lib/civic.ts` `grantRouting` (UI only) and tested; change both together.
-- Field encounters always enqueue to localStorage first (`src/lib/offline-queue.ts`) and upsert by `client_ref` — makes offline retries idempotent.
-- Demo role switcher signs into shared demo accounts created by `ensureDemoAccount` server fn — lets reviewers preview staff tabs without sign-up.
-- PWA is manifest-only (no service worker) — avoids stale-cache issues in preview.
+- Field encounters always enqueue to localStorage first (`src/lib/offline-queue.ts`) and upsert by `client_ref`; entries carry `city_id` so one device cannot cross-sync city accounts.
+- The demo role switcher uses shared accounts confined to Demo City; real city staff use supervisor-created invitations.
+- PWA is manifest-only (no service worker) to avoid stale-cache issues in preview.

@@ -14,8 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      cities: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          region: string
+          slug: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          region: string
+          slug: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          region?: string
+          slug?: string
+          status?: string
+        }
+        Relationships: []
+      }
       client_documents: {
         Row: {
+          city_id: string
           client_alias: string
           consent_verified: boolean
           created_at: string
@@ -26,6 +57,7 @@ export type Database = {
           uploaded_by: string
         }
         Insert: {
+          city_id?: string
           client_alias: string
           consent_verified?: boolean
           created_at?: string
@@ -36,6 +68,7 @@ export type Database = {
           uploaded_by?: string
         }
         Update: {
+          city_id?: string
           client_alias?: string
           consent_verified?: boolean
           created_at?: string
@@ -45,12 +78,21 @@ export type Database = {
           storage_path?: string
           uploaded_by?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "client_documents_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       diversion_fund: {
         Row: {
           active: boolean
           balance: number
+          city_id: string
           created_at: string
           id: string
           name: string
@@ -59,6 +101,7 @@ export type Database = {
         Insert: {
           active?: boolean
           balance: number
+          city_id?: string
           created_at?: string
           id?: string
           name: string
@@ -67,18 +110,28 @@ export type Database = {
         Update: {
           active?: boolean
           balance?: number
+          city_id?: string
           created_at?: string
           id?: string
           name?: string
           total_amount?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "diversion_fund_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       diversion_requests: {
         Row: {
           amount_requested: number
           assigned_worker_id: string | null
           barrier_type: string
+          city_id: string
           contact_info: Json
           created_at: string
           id: string
@@ -90,6 +143,7 @@ export type Database = {
           amount_requested: number
           assigned_worker_id?: string | null
           barrier_type: string
+          city_id?: string
           contact_info?: Json
           created_at?: string
           id?: string
@@ -101,6 +155,7 @@ export type Database = {
           amount_requested?: number
           assigned_worker_id?: string | null
           barrier_type?: string
+          city_id?: string
           contact_info?: Json
           created_at?: string
           id?: string
@@ -108,10 +163,19 @@ export type Database = {
           status?: string
           tracking_code?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "diversion_requests_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       field_encounters: {
         Row: {
+          city_id: string
           client_ref: string | null
           created_at: string
           id: string
@@ -123,6 +187,7 @@ export type Database = {
           worker_id: string
         }
         Insert: {
+          city_id?: string
           client_ref?: string | null
           created_at?: string
           id?: string
@@ -134,6 +199,7 @@ export type Database = {
           worker_id?: string
         }
         Update: {
+          city_id?: string
           client_ref?: string | null
           created_at?: string
           id?: string
@@ -144,12 +210,21 @@ export type Database = {
           synced_from_offline?: boolean
           worker_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "field_encounters_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       micro_grants: {
         Row: {
           amount: number
           approved_by: string | null
+          city_id: string
           created_at: string
           id: string
           payee_name: string
@@ -161,6 +236,7 @@ export type Database = {
         Insert: {
           amount: number
           approved_by?: string | null
+          city_id?: string
           created_at?: string
           id?: string
           payee_name: string
@@ -172,6 +248,7 @@ export type Database = {
         Update: {
           amount?: number
           approved_by?: string | null
+          city_id?: string
           created_at?: string
           id?: string
           payee_name?: string
@@ -181,6 +258,13 @@ export type Database = {
           status?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "micro_grants_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "micro_grants_request_id_fkey"
             columns: ["request_id"]
@@ -192,6 +276,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          city_id: string | null
           created_at: string
           full_name: string | null
           id: string
@@ -199,6 +284,7 @@ export type Database = {
           team_zone: string | null
         }
         Insert: {
+          city_id?: string | null
           created_at?: string
           full_name?: string | null
           id: string
@@ -206,16 +292,26 @@ export type Database = {
           team_zone?: string | null
         }
         Update: {
+          city_id?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
           role?: string
           team_zone?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ride_dispatches: {
         Row: {
+          city_id: string
           created_at: string
           destination: string
           dispatched_by: string
@@ -226,6 +322,7 @@ export type Database = {
           wellness_check_id: string | null
         }
         Insert: {
+          city_id?: string
           created_at?: string
           destination: string
           dispatched_by?: string
@@ -236,6 +333,7 @@ export type Database = {
           wellness_check_id?: string | null
         }
         Update: {
+          city_id?: string
           created_at?: string
           destination?: string
           dispatched_by?: string
@@ -247,6 +345,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "ride_dispatches_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ride_dispatches_wellness_check_id_fkey"
             columns: ["wellness_check_id"]
             isOneToOne: false
@@ -255,9 +360,39 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          city_id: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          city_id: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          city_id?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wellness_checks: {
         Row: {
           assigned_worker_id: string | null
+          city_id: string
           created_at: string
           description: string | null
           id: string
@@ -271,6 +406,7 @@ export type Database = {
         }
         Insert: {
           assigned_worker_id?: string | null
+          city_id?: string
           created_at?: string
           description?: string | null
           id?: string
@@ -284,6 +420,7 @@ export type Database = {
         }
         Update: {
           assigned_worker_id?: string | null
+          city_id?: string
           created_at?: string
           description?: string | null
           id?: string
@@ -295,18 +432,28 @@ export type Database = {
           tracking_code?: string
           urgency_tags?: string[]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "wellness_checks_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      current_city_id: { Args: never; Returns: string }
       decide_micro_grant: {
         Args: { _approve: boolean; _grant_id: string }
         Returns: {
           amount: number
           approved_by: string | null
+          city_id: string
           created_at: string
           id: string
           payee_name: string
@@ -323,6 +470,31 @@ export type Database = {
         }
       }
       is_staff: { Args: { _uid: string }; Returns: boolean }
+      provision_city: {
+        Args: {
+          _full_name: string
+          _fund_total: number
+          _name: string
+          _region: string
+          _slug: string
+          _user_id: string
+        }
+        Returns: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          region: string
+          slug: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "cities"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       staff_role: { Args: { _uid: string }; Returns: string }
       submit_micro_grant: {
         Args: {
@@ -334,6 +506,7 @@ export type Database = {
         Returns: {
           amount: number
           approved_by: string | null
+          city_id: string
           created_at: string
           id: string
           payee_name: string
@@ -351,7 +524,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "outreach" | "supervisor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -478,6 +651,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["outreach", "supervisor"],
+    },
   },
 } as const

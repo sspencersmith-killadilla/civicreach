@@ -23,7 +23,7 @@ function expiryState(d: string | null) {
 }
 
 export function DocumentVault() {
-  const { session } = useSession();
+  const { session, profile } = useSession();
   const [docs, setDocs] = useState<Doc[]>([]);
   const [alias, setAlias] = useState("");
   const [type, setType] = useState("id");
@@ -39,9 +39,9 @@ export function DocumentVault() {
   useEffect(() => void load(), [load]);
 
   async function upload() {
-    if (!file || !session) return;
+    if (!file || !session || !profile?.city_id) return;
     setBusy(true);
-    const path = `${alias.trim().replace(/[^\w-]/g, "_")}/${type}-${Date.now()}-${file.name.replace(/[^\w.-]/g, "_")}`;
+    const path = `${profile.city_id}/${alias.trim().replace(/[^\w-]/g, "_")}/${type}-${Date.now()}-${file.name.replace(/[^\w.-]/g, "_")}`;
     const up = await supabase.storage.from("client-documents").upload(path, file);
     if (up.error) {
       setBusy(false);
@@ -54,6 +54,7 @@ export function DocumentVault() {
       consent_verified: consent,
       expires_on: expires || null,
       uploaded_by: session.user.id,
+      city_id: profile.city_id,
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }

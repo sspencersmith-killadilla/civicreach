@@ -15,6 +15,13 @@
       "when": 1795391194447,
       "tag": "0001_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795392351628,
+      "tag": "0002_add_isolated_city_workspaces",
+      "breakpoints": true
     }
   ]
 }

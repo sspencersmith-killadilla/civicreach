@@ -1,11 +1,11 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { CloudOff, CloudUpload, Crosshair, Loader2, Lock, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 import { SERVICE_CHIPS, timeAgo } from "@/lib/civic";
 import { enqueue, readQueue, subscribeQueue, syncQueue } from "@/lib/offline-queue";
-import { useOnline } from "@/lib/session";
+import { useOnline, useSession } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -14,18 +14,23 @@ import { Chip } from "./ui";
 const EMPTY: never[] = [];
 let snapshot = "";
 let cached: ReturnType<typeof readQueue> = [];
-function getQueue() {
+let cachedCity = "";
+function getQueue(cityId: string) {
   const raw = localStorage.getItem("civicreach.encounterQueue.v1") ?? "[]";
-  if (raw !== snapshot) {
+  if (raw !== snapshot || cityId !== cachedCity) {
     snapshot = raw;
-    cached = readQueue();
+    cachedCity = cityId;
+    cached = readQueue(cityId);
   }
   return cached;
 }
 
 export function EncounterLogger() {
   const online = useOnline();
-  const queue = useSyncExternalStore(subscribeQueue, getQueue, () => EMPTY);
+  const { profile } = useSession();
+  const cityId = profile?.city_id ?? "";
+  const getSnapshot = useCallback(() => getQueue(cityId), [cityId]);
+  const queue = useSyncExternalStore(subscribeQueue, getSnapshot, () => EMPTY);
   const [chips, setChips] = useState<string[]>([]);
   const [note, setNote] = useState("");
   const [showNote, setShowNote] = useState(false);
@@ -45,7 +50,8 @@ export function EncounterLogger() {
   async function sync(manual = false) {
     setSyncing(true);
     try {
-      const r = await syncQueue();
+      if (!cityId) return;
+      const r = await syncQueue(cityId);
       if (r.synced) toast.success(`Synced ${r.synced} encounter${r.synced > 1 ? "s" : ""}`);
       else if (manual) toast.message(navigator.onLine ? "Nothing to sync" : "Still offline — will sync when signal returns");
       void loadRecent();
@@ -63,12 +69,15 @@ export function EncounterLogger() {
     const on = () => void sync();
     window.addEventListener("online", on);
     return () => window.removeEventListener("online", on);
+    // Initial capture is intentionally once per mounted console; sync uses the active city.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cityId]);
 
   function log() {
+    if (!cityId) return;
     enqueue({
       client_ref: crypto.randomUUID(),
+      city_id: cityId,
       lat: gps?.lat ?? null,
       lng: gps?.lng ?? null,
       service_chips: chips,

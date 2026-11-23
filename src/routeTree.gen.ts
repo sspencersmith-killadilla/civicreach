@@ -12,9 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CitySignupRouteImport } from './routes/city-signup'
+import { Route as ForCitiesRouteImport } from './routes/for-cities'
+import { Route as GuideRouteImport } from './routes/guide'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as WellnessRouteImport } from './routes/wellness'
 import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticated/console'
+import { Route as CCitySlugIndexRouteImport } from './routes/c/$citySlug/index'
+import { Route as CCitySlugHelpRouteImport } from './routes/c/$citySlug/help'
+import { Route as CCitySlugWellnessRouteImport } from './routes/c/$citySlug/wellness'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,6 +34,21 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitySignupRoute = CitySignupRouteImport.update({
+  id: '/city-signup',
+  path: '/city-signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForCitiesRoute = ForCitiesRouteImport.update({
+  id: '/for-cities',
+  path: '/for-cities',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuideRoute = GuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HelpRoute = HelpRouteImport.update({
@@ -45,51 +66,118 @@ const AuthenticatedConsoleRoute = AuthenticatedConsoleRouteImport.update({
   path: '/console',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const CCitySlugIndexRoute = CCitySlugIndexRouteImport.update({
+  id: '/c/$citySlug/',
+  path: '/c/$citySlug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CCitySlugHelpRoute = CCitySlugHelpRouteImport.update({
+  id: '/c/$citySlug/help',
+  path: '/c/$citySlug/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CCitySlugWellnessRoute = CCitySlugWellnessRouteImport.update({
+  id: '/c/$citySlug/wellness',
+  path: '/c/$citySlug/wellness',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/city-signup': typeof CitySignupRoute
+  '/for-cities': typeof ForCitiesRoute
+  '/guide': typeof GuideRoute
   '/help': typeof HelpRoute
   '/wellness': typeof WellnessRoute
   '/console': typeof AuthenticatedConsoleRoute
+  '/c/$citySlug/help': typeof CCitySlugHelpRoute
+  '/c/$citySlug/wellness': typeof CCitySlugWellnessRoute
+  '/c/$citySlug/': typeof CCitySlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/city-signup': typeof CitySignupRoute
+  '/for-cities': typeof ForCitiesRoute
+  '/guide': typeof GuideRoute
   '/help': typeof HelpRoute
   '/wellness': typeof WellnessRoute
   '/console': typeof AuthenticatedConsoleRoute
+  '/c/$citySlug/help': typeof CCitySlugHelpRoute
+  '/c/$citySlug/wellness': typeof CCitySlugWellnessRoute
+  '/c/$citySlug': typeof CCitySlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/city-signup': typeof CitySignupRoute
+  '/for-cities': typeof ForCitiesRoute
+  '/guide': typeof GuideRoute
   '/help': typeof HelpRoute
   '/wellness': typeof WellnessRoute
   '/_authenticated/console': typeof AuthenticatedConsoleRoute
+  '/c/$citySlug/help': typeof CCitySlugHelpRoute
+  '/c/$citySlug/wellness': typeof CCitySlugWellnessRoute
+  '/c/$citySlug/': typeof CCitySlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/help' | '/wellness' | '/console'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/city-signup'
+    | '/for-cities'
+    | '/guide'
+    | '/help'
+    | '/wellness'
+    | '/console'
+    | '/c/$citySlug/help'
+    | '/c/$citySlug/wellness'
+    | '/c/$citySlug/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/help' | '/wellness' | '/console'
+  to:
+    | '/'
+    | '/auth'
+    | '/city-signup'
+    | '/for-cities'
+    | '/guide'
+    | '/help'
+    | '/wellness'
+    | '/console'
+    | '/c/$citySlug/help'
+    | '/c/$citySlug/wellness'
+    | '/c/$citySlug'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/city-signup'
+    | '/for-cities'
+    | '/guide'
     | '/help'
     | '/wellness'
     | '/_authenticated/console'
+    | '/c/$citySlug/help'
+    | '/c/$citySlug/wellness'
+    | '/c/$citySlug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CitySignupRoute: typeof CitySignupRoute
+  ForCitiesRoute: typeof ForCitiesRoute
+  GuideRoute: typeof GuideRoute
   HelpRoute: typeof HelpRoute
   WellnessRoute: typeof WellnessRoute
+  CCitySlugHelpRoute: typeof CCitySlugHelpRoute
+  CCitySlugWellnessRoute: typeof CCitySlugWellnessRoute
+  CCitySlugIndexRoute: typeof CCitySlugIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,6 +203,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/city-signup': {
+      id: '/city-signup'
+      path: '/city-signup'
+      fullPath: '/city-signup'
+      preLoaderRoute: typeof CitySignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-cities': {
+      id: '/for-cities'
+      path: '/for-cities'
+      fullPath: '/for-cities'
+      preLoaderRoute: typeof ForCitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guide': {
+      id: '/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof GuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/help': {
       id: '/help'
       path: '/help'
@@ -136,6 +245,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConsoleRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/c/$citySlug/': {
+      id: '/c/$citySlug/'
+      path: '/c/$citySlug'
+      fullPath: '/c/$citySlug/'
+      preLoaderRoute: typeof CCitySlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$citySlug/help': {
+      id: '/c/$citySlug/help'
+      path: '/c/$citySlug/help'
+      fullPath: '/c/$citySlug/help'
+      preLoaderRoute: typeof CCitySlugHelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c/$citySlug/wellness': {
+      id: '/c/$citySlug/wellness'
+      path: '/c/$citySlug/wellness'
+      fullPath: '/c/$citySlug/wellness'
+      preLoaderRoute: typeof CCitySlugWellnessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -154,8 +284,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CitySignupRoute: CitySignupRoute,
+  ForCitiesRoute: ForCitiesRoute,
+  GuideRoute: GuideRoute,
   HelpRoute: HelpRoute,
   WellnessRoute: WellnessRoute,
+  CCitySlugHelpRoute: CCitySlugHelpRoute,
+  CCitySlugWellnessRoute: CCitySlugWellnessRoute,
+  CCitySlugIndexRoute: CCitySlugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

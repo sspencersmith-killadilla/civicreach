@@ -20,8 +20,8 @@ This guide is for a technical administrator deploying the repository outside Lov
 ## 1. Install
 
 ```sh
-git clone YOUR_REPOSITORY_URL tandem
-cd tandem
+git clone YOUR_REPOSITORY_URL civicreach
+cd civicreach
 bun install
 ```
 

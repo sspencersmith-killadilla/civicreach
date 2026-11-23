@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { SessionProvider } from "@/lib/session";
 import { AppHeader } from "@/components/civic/AppHeader";
+import { SiteFooter } from "@/components/civic/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -134,6 +135,7 @@ function RootComponent() {
       <SessionProvider>
         <AppHeader />
         <Outlet />
+        <SiteFooter />
         <Toaster richColors position="top-center" />
       </SessionProvider>
     </QueryClientProvider>

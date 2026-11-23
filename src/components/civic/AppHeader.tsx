@@ -50,7 +50,7 @@ export function AppHeader() {
       </button>)}
     </div></div>}
     <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4">
-      <Link to="/" className="flex items-center gap-2.5"><BrandMark className="size-10 text-primary" /><span className="leading-tight"><span className="block text-xl font-extrabold tracking-tight">CivicReach</span><span className="hidden text-xs text-muted-foreground sm:block">A Civic Plexus app</span></span></Link>
+      <Link to="/" className="flex items-center gap-2.5" aria-label="CivicReach home"><BrandMark className="size-9" /><span className="font-display text-xl font-extrabold tracking-tight text-primary">CivicReach</span></Link>
       <div className="flex items-center gap-1.5">
         <span role="status" className={cn("flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold", online ? "bg-teal-soft text-accent-foreground" : "bg-amber-soft text-amber-foreground")}>{online ? <Wifi className="size-3.5" /> : <WifiOff className="size-3.5" />}<span className="hidden sm:inline">{online ? "Online" : "Offline"}</span></span>
         {!session && <><Link to="/for-cities" className="hidden min-h-10 items-center rounded-lg px-3 text-sm font-medium hover:bg-muted md:flex">For cities</Link><Link to="/guide" className="hidden min-h-10 items-center rounded-lg px-3 text-sm font-medium hover:bg-muted md:flex">Guide</Link></>}
